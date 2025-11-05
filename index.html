@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mariscal Sistemas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root { --vinho: #7F1D1D; --cinza-claro: #F9FAFB; }
+    body { background-color: var(--cinza-claro); min-height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .navbar { background: var(--vinho); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .navbar-brand, .nav-link { color: white !important; font-weight: 500; }
+    .nav-link:hover { color: #E5E7EB !important; }
+    .btn-modo { background: transparent; border: none; color: white; font-size: 1.5rem; }
+    .btn-modo:hover { transform: rotate(15deg); }
+    .card-central { padding: 3rem; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; max-width: 600px; margin: 2rem auto; }
+    .container { max-width: 600px; }
+    body.dark-mode { background: #1F2937; color: #F3F4F6; }
+    body.dark-mode .navbar { background: #374151 !important; }
+    body.dark-mode .card-central, body.dark-mode .card, body.dark-mode .tab-content { background: #374151; color: #F3F4F6; }
+    .tab-content { display: none; padding: 2rem; background: white; border-radius: 12px; margin: 1rem auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; }
+    .tab-content.active { display: block; }
+    .nav-tabs .nav-link { border: none; color: #6B7280; font-weight: 500; }
+    .nav-tabs .nav-link.active { color: var(--vinho); border-bottom: 3px solid var(--vinho); }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Mariscal Sistemas</a>
+      <button id="toggleModo" class="btn-modo"><i class="bi bi-moon-fill"></i></button>
+    </div>
+  </nav>
+
+  <!-- ABAS -->
+  <div class="container mt-4">
+    <ul class="nav nav-tabs" id="myTab">
+      <li class="nav-item"><a class="nav-link active" data-tab="inicio">Início</a></li>
+      <li class="nav-item"><a class="nav-link" data-tab="login">Login</a></li>
+      <li class="nav-item"><a class="nav-link" data-tab="cadastro">Cadastrar</a></li>
+      <li class="nav-item"><a class="nav-link" data-tab="perfil">Perfil</a></li>
+      <li class="nav-item"><a class="nav-link" data-tab="clientes">Clientes</a></li>
+      <li class="nav-item"><a class="nav-link" data-tab="fornecedores">Fornecedores</a></li>
+    </ul>
+  </div>
+
+  <!-- Início -->
+  <div id="inicio" class="tab-content active">
+    <div class="card-central">
+      <h1>Bem-vindo ao Sistema</h1>
+      <p class="lead">Gerencie seus dados com segurança.</p>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+        <button onclick="showTab('login')" class="btn btn-primary">Ir para Login</button>
+        <button onclick="showTab('clientes')" class="btn btn-success">Clientes</button>
+        <button onclick="showTab('fornecedores')" class="btn btn-info text-white">Fornecedores</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login -->
+  <div id="login" class="tab-content">
+    <div class="card p-4">
+      <h2 class="text-center">Login</h2>
+      <form id="formLogin">
+        <input type="email" class="form-control mb-3" placeholder="E-mail" id="emailLogin" required>
+        <input type="password" class="form-control mb-3" placeholder="Senha" id="senhaLogin" required>
+        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+      </form>
+      <p class="text-center mt-3"><a href="#" onclick="showTab('cadastro')">Cadastrar novo usuário</a></p>
+      <div id="msgLogin" class="mt-3"></div>
+    </div>
+  </div>
+
+  <!-- Cadastrar -->
+  <div id="cadastro" class="tab-content">
+    <div class="card p-4">
+      <h2 class="text-center">Cadastrar Usuário</h2>
+      <form id="formCadastro">
+        <input type="text" class="form-control mb-3" placeholder="Nome" id="nomeCad" required>
+        <input type="email" class="form-control mb-3" placeholder="E-mail (ex: teste@email.com)" id="emailCad" required>
+        <input type="password" class="form-control mb-3" placeholder="Senha" id="senhaCad" required>
+        <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+      </form>
+      <div id="msgCad" class="mt-3"></div>
+      <p class="text-center mt-3"><a href="#" onclick="showTab('login')">Voltar ao Login</a></p>
+    </div>
+  </div>
+
+  <!-- Perfil -->
+  <div id="perfil" class="tab-content">
+    <div class="card p-4">
+      <h2>Meu Perfil</h2>
+      <div id="perfilDados"></div>
+      <button onclick="showTab('inicio')" class="btn btn-secondary mt-3">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Clientes -->
+  <div id="clientes" class="tab-content">
+    <div class="card p-4">
+      <h2>Clientes <a href="#" onclick="novoCliente()" class="btn btn-success btn-sm float-end">+ Novo</a></h2>
+      <table class="table table-striped" id="tabelaClientes">
+        <thead><tr><th>Nome</th><th>E-mail</th><th>Ações</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="showTab('inicio')" class="btn btn-secondary">Voltar</button>
+    </div>
+
+    <div id="formCliente" class="mt-4" style="display:none;">
+      <h4 id="tituloCliente">Novo Cliente</h4>
+      <form id="formClienteCRUD">
+        <input type="hidden" id="clienteId">
+        <input type="text" class="form-control mb-2" placeholder="Nome" id="clienteNome" required>
+        <input type="email" class="form-control mb-2" placeholder="E-mail" id="clienteEmail" required>
+        <input type="text" class="form-control mb-2" placeholder="Telefone" id="clienteTel">
+        <input type="text" class="form-control mb-2" placeholder="Endereço" id="clienteEnd">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <button type="button" class="btn btn-secondary" onclick="cancelarForm('formCliente')">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Fornecedores -->
+  <div id="fornecedores" class="tab-content">
+    <div class="card p-4">
+      <h2>Fornecedores <a href="#" onclick="novoFornecedor()" class="btn btn-success btn-sm float-end">+ Novo</a></h2>
+      <table class="table table-striped" id="tabelaFornecedores">
+        <thead><tr><th>Nome</th><th>E-mail</th><th>Ações</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="showTab('inicio')" class="btn btn-secondary">Voltar</button>
+    </div>
+
+    <div id="formFornecedor" class="mt-4" style="display:none;">
+      <h4 id="tituloFornecedor">Novo Fornecedor</h4>
+      <form id="formFornecedorCRUD">
+        <input type="hidden" id="fornecedorId">
+        <input type="text" class="form-control mb-2" placeholder="Nome" id="fornecedorNome" required>
+        <input type="email" class="form-control mb-2" placeholder="E-mail" id="fornecedorEmail" required>
+        <input type="text" class="form-control mb-2" placeholder="Telefone" id="fornecedorTel">
+        <input type="text" class="form-control mb-2" placeholder="Endereço" id="fornecedorEnd">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <button type="button" class="btn btn-secondary" onclick="cancelarForm('formFornecedor')">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript + Supabase -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(
+      'https://jbwvnfumrefvofedenzs.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impid3ZuZnVtcmVmdm9mZWRlbnpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDU1NjAsImV4cCI6MjA3NzkyMTU2MH0.WjsaOQE--ChWcLCloL2ACZ7QmAiweU9KRHeaacKgJL4'
+    );
+
+    // === ABAS ===
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.querySelector(`a[data-tab="${tabId}"]`).classList.add('active');
+      if (tabId === 'perfil') loadPerfil();
+      if (tabId === 'clientes') loadClientes();
+      if (tabId === 'fornecedores') loadFornecedores();
+    }
+    document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', e => {
+      e.preventDefault();
+      showTab(l.dataset.tab);
+    }));
+
+    // === MODO ESCURO ===
+    const toggleBtn = document.getElementById('toggleModo');
+    if (localStorage.getItem('modo') === 'dark') {
+      document.body.classList.add('dark-mode');
+      toggleBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+    }
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      toggleBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+      localStorage.setItem('modo', isDark ? 'dark' : 'light');
+    });
+
+    // === CADASTRO ===
+    document.getElementById('formCadastro').addEventListener('submit', async e => {
+      e.preventDefault();
+      const nome = document.getElementById('nomeCad').value.trim();
+      const email = document.getElementById('emailCad').value.trim().toLowerCase();
+      const senha = document.getElementById('senhaCad').value;
+      const msg = document.getElementById('msgCad');
+
+      if (!email.includes('@') || !email.includes('.')) {
+        msg.innerHTML = `<div class="alert alert-danger">E-mail inválido!</div>`;
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('usuarios')
+        .insert({ nome, email, login: email, perfil: 'Usuário', senha_hash: senha })
+        .select()
+        .single();
+
+      if (error) {
+        msg.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+      } else {
+        localStorage.setItem('currentUser', JSON.stringify(data));
+        msg.innerHTML = `<div class="alert alert-success">Cadastrado!</div>`;
+        setTimeout(() => showTab('login'), 1500);
+      }
+    });
+
+    // === LOGIN ===
+    document.getElementById('formLogin').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email = document.getElementById('emailLogin').value.trim().toLowerCase();
+      const senha = document.getElementById('senhaLogin').value;
+      const msg = document.getElementById('msgLogin');
+
+      const { data, error } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('email', email)
+        .eq('senha_hash', senha)
+        .single();
+
+      if (error || !data) {
+        msg.innerHTML = `<div class="alert alert-danger">E-mail ou senha incorretos.</div>`;
+      } else {
+        localStorage.setItem('currentUser', JSON.stringify(data));
+        msg.innerHTML = `<div class="alert alert-success">Login OK!</div>`;
+        setTimeout(() => showTab('perfil'), 1000);
+      }
+    });
+
+    // === PERFIL ===
+    function loadPerfil() {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user) { showTab('login'); return; }
+      document.getElementById('perfilDados').innerHTML = `
+        <p><strong>Nome:</strong> ${user.nome}</p>
+        <p><strong>E-mail:</strong> ${user.email}</p>
+        <p><strong>Perfil:</strong> ${user.perfil}</p>
+      `;
+    }
+
+    // === CLIENTES ===
+    async function loadClientes() {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user) return;
+      const { data } = await supabase.from('clientes').select('*').eq('usuario_id', user.id);
+      const tbody = document.querySelector('#tabelaClientes tbody');
+      tbody.innerHTML = data.map(c => `
+        <tr>
+          <td>${c.nome}</td>
+          <td>${c.email}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editarCliente('${c.id}', '${c.nome}', '${c.email}', '${c.telefone || ''}', '${c.endereco || ''}')">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="excluir('clientes', '${c.id}', loadClientes)">Excluir</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.novoCliente = () => {
+      document.getElementById('formCliente').style.display = 'block';
+      document.getElementById('tituloCliente').textContent = 'Novo Cliente';
+      document.getElementById('clienteId').value = '';
+    };
+
+    window.editarCliente = (id, nome, email, tel, end) => {
+      document.getElementById('formCliente').style.display = 'block';
+      document.getElementById('tituloCliente').textContent = 'Editar Cliente';
+      document.getElementById('clienteId').value = id;
+      document.getElementById('clienteNome').value = nome;
+      document.getElementById('clienteEmail').value = email;
+      document.getElementById('clienteTel').value = tel;
+      document.getElementById('clienteEnd').value = end;
+    };
+
+    // === FORNECEDORES ===
+    async function loadFornecedores() {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user) return;
+      const { data } = await supabase.from('fornecedores').select('*').eq('usuario_id', user.id);
+      const tbody = document.querySelector('#tabelaFornecedores tbody');
+      tbody.innerHTML = data.map(f => `
+        <tr>
+          <td>${f.nome}</td>
+          <td>${f.email}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editarFornecedor('${f.id}', '${f.nome}', '${f.email}', '${f.telefone || ''}', '${f.endereco || ''}')">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="excluir('fornecedores', '${f.id}', loadFornecedores)">Excluir</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.novoFornecedor = () => {
+      document.getElementById('formFornecedor').style.display = 'block';
+      document.getElementById('tituloFornecedor').textContent = 'Novo Fornecedor';
+      document.getElementById('fornecedorId').value = '';
+    };
+
+    window.editarFornecedor = (id, nome, email, tel, end) => {
+      document.getElementById('formFornecedor').style.display = 'block';
+      document.getElementById('tituloFornecedor').textContent = 'Editar Fornecedor';
+      document.getElementById('fornecedorId').value = id;
+      document.getElementById('fornecedorNome').value = nome;
+      document.getElementById('fornecedorEmail').value = email;
+      document.getElementById('fornecedorTel').value = tel;
+      document.getElementById('fornecedorEnd').value = end;
+    };
+
+    // === CRUD ===
+    window.cancelarForm = (formId) => document.getElementById(formId).style.display = 'none';
+
+    window.excluir = async (tabela, id, callback) => {
+      if (confirm('Excluir?')) {
+        await supabase.from(tabela).delete().eq('id', id);
+        callback();
+      }
+    };
+
+    document.getElementById('formClienteCRUD').addEventListener('submit', async e => {
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      const id = document.getElementById('clienteId').value;
+      const dados = {
+        nome: document.getElementById('clienteNome').value,
+        email: document.getElementById('clienteEmail').value,
+        telefone: document.getElementById('clienteTel').value,
+        endereco: document.getElementById('clienteEnd').value,
+        usuario_id: user.id
+      };
+      if (id) {
+        await supabase.from('clientes').update(dados).eq('id', id);
+      } else {
+        await supabase.from('clientes').insert(dados);
+      }
+      cancelarForm('formCliente');
+      loadClientes();
+    });
+
+    document.getElementById('formFornecedorCRUD').addEventListener('submit', async e => {
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      const id = document.getElementById('fornecedorId').value;
+      const dados = {
+        nome: document.getElementById('fornecedorNome').value,
+        email: document.getElementById('fornecedorEmail').value,
+        telefone: document.getElementById('fornecedorTel').value,
+        endereco: document.getElementById('fornecedorEnd').value,
+        usuario_id: user.id
+      };
+      if (id) {
+        await supabase.from('fornecedores').update(dados).eq('id', id);
+      } else {
+        await supabase.from('fornecedores').insert(dados);
+      }
+      cancelarForm('formFornecedor');
+      loadFornecedores();
+    });
+
+    // === INICIAR ===
+    showTab('inicio');
+  </script>
+</body>
+</html>
